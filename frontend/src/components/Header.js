@@ -70,12 +70,14 @@ function Header() {
 //     </header>
         <header>
             <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect className="py-4">
-                    <Navbar.Brand onClick={handleNavigateHome} style={{ cursor: "pointer" }}>
+                    <Navbar.Brand onClick={handleNavigateHome} style={{ cursor: "pointer" }} className='ms-4'>
                         Scales Tools
                     </Navbar.Brand>
-                    <Navbar.Brand onClick={handleNavigateRegistration} style={{ cursor: "pointer" }}>
+                    <Nav className="ms-auto">
+                      <Navbar.Brand onClick={handleNavigateRegistration} style={{ cursor: "pointer" }} className='me-4'>
                         Registration
-                    </Navbar.Brand>
+                      </Navbar.Brand>
+                    </Nav>
             </Navbar>
         </header>
   )
