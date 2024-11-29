@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container, Row, Col, Image} from 'react-bootstrap'
 
+import ProtectedRoute from "./auth/protectedRoute";
 
 import RegistrationForm from './auth/registration';
 import LoginForm from "./auth/login";
@@ -8,6 +9,9 @@ import HomePage from './pages/home';
 import Header from "./components/Header";
 import Footter from "./components/Footter";
 import SideComponent from "./components/SideComponent";
+import Profile from "./pages/profile";
+import AdminProtect from "./auth/adminProtect";
+import Admin from "./pages/admin";
 
 
 function App() {
@@ -37,6 +41,16 @@ function App() {
                 <Route path="/" element={<HomePage />} exact />
                 <Route path="/registration" element={<RegistrationForm />} />
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/profile"           element={
+                                              <ProtectedRoute>
+                                                <Profile />
+                                              </ProtectedRoute>
+                                            } />
+                <Route path="/admin"           element={
+                                              <AdminProtect>
+                                                <Admin />
+                                              </AdminProtect>
+                                            } />
               </Routes>
 
             </Col>

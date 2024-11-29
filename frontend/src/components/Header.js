@@ -1,14 +1,32 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 // import { LinkContainer } from 'react-router-bootstrap'
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from 'react-responsive';
+import { jwtDecode } from "jwt-decode";
+
+
 
 function Header() {
 
   const isDesktopOrLaptop = useMediaQuery({ query: '(min-width: 768px)' });
-  const userData = true
   const navigate = useNavigate();
+  const [token, setToken] = useState(localStorage.getItem("authToken"))
+  const [role, setRole] = useState("")
+
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setRole(decoded.role); // Устанавливаем роль
+      } catch (err) {
+        console.error("Invalid token:", err);
+      }
+    }
+  }, [token, navigate]);
+
+
 
   const handleNavigateHome = () => {
     navigate("/");
@@ -16,6 +34,18 @@ function Header() {
 
   const handleNavigateRegistration = () => {
     navigate("/registration");
+  };
+
+  const handleNavigateMethods = () => {
+    navigate("/methods");
+  };
+
+  const handleNavigateProfile = () => {
+    navigate("/profile");
+  };
+
+  const handleNavigateAdmin = () => {
+    navigate("/admin");
   };
 
 
@@ -74,9 +104,25 @@ function Header() {
                         Scales Tools
                     </Navbar.Brand>
                     <Nav className="ms-auto">
+                      <Navbar.Brand onClick={handleNavigateMethods} style={{ cursor: "pointer" }} className='me-4'>
+                        Methods
+                      </Navbar.Brand>
+                      {token ? 
+                        <Navbar.Brand onClick={handleNavigateProfile} style={{ cursor: "pointer" }} className='me-4'>
+                          Profile
+                        </Navbar.Brand>
+                      :
                       <Navbar.Brand onClick={handleNavigateRegistration} style={{ cursor: "pointer" }} className='me-4'>
                         Registration
                       </Navbar.Brand>
+                      }
+                      {role === "admin" ?
+                          <Navbar.Brand onClick={handleNavigateAdmin} style={{ cursor: "pointer" }} className='me-4'>
+                            Admin
+                          </Navbar.Brand>
+                      :
+                      <></>
+                      }
                     </Nav>
             </Navbar>
         </header>

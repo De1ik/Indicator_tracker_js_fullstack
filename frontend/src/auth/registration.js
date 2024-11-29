@@ -13,7 +13,8 @@ const RegistrationForm = () => {
   const navigate = useNavigate();
 
   const handleNavigationHome = () => {
-    navigate("/");
+    // navigate("/");
+    window.location.replace("/");
   };
 
     const [name, setName] = useState("")
@@ -50,6 +51,7 @@ const RegistrationForm = () => {
                 const responseData = await response.json();
 
                 if (response.status === 201) {
+                    localStorage.setItem("authToken", responseData.token);
                     alert("Registration successful!");
                     handleNavigationHome()
                 } else {
@@ -188,7 +190,7 @@ const RegistrationForm = () => {
                     />
                 </Form.Group>
                 <span style={{fontSize:"small"}}>
-                    *min length - 8 <br/>
+                    *min length - 6 <br/>
                     {/* *min one letter <br/>
                     *min one number <br/>
                     *can not be easy like: <strong>qwerty12345</strong> */}
@@ -196,7 +198,7 @@ const RegistrationForm = () => {
                 <Form.Group className="mb-3 mt-1" controlId="password">
                     <Form.Control
                         required
-                        minLength={8}
+                        minLength={6}
                         type='password'
                         placeholder='Enter password'
                         value={password}

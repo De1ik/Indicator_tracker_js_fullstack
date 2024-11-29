@@ -53,8 +53,8 @@ stranky merani - vlozit merania (samostatne), importovat merania z CSV (datum YY
 stranka s reklamou - reklama sa bude zobrazovat kazdu minutu pouzivania aplikacie. Po stlaceni reklamy sa inkrementuje pocitadlo a presmeruje sa na cielovu adresu odkazu
 
 # Rozhranie admin
-meno: admin
-heslo: admin
+✅ meno: admin
+✅ heslo: admin
 stranka pre admina
   - import a export pouzivatelov v CSV (e-mail, meno, heslo, vek)
   - reklama s moznostou zmeny linkov (img + href) a zobrazenie aktualneho stavu pocitadla reklamneho baneru

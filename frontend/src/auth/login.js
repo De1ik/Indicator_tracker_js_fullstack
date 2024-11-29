@@ -11,13 +11,15 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleNavigationHome = () => {
-    navigate("/");
+    // navigate("/");
+    window.location.replace("/");
   };
 
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
+    const [isAdmin, setIsAdmin] = useState(false);
 
 
     const handleSubmit = async (e) => {
@@ -39,6 +41,7 @@ const LoginForm = () => {
                 const responseData = await response.json();
 
                 if (response.status === 201) {
+                    localStorage.setItem("authToken", responseData.token);
                     alert("Sign in was successful!");
                     handleNavigationHome()
                 } else {
@@ -51,25 +54,47 @@ const LoginForm = () => {
         }
         
     };
+    
 
   return (
     <>
         <h1 className='text-center m-5'>Sign In</h1>
         <FormContainer>
             <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="email">
-                    <Form.Control
-                        required
-                        type='email'
-                        placeholder='Enter email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                {isAdmin ?
+                    <Form.Group className="mb-3" controlId="email">
+                        <Form.Control
+                            required
+                            type='text'
+                            placeholder='Enter name'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                                    
+                    </Form.Group>
+                    :
+                    <Form.Group className="mb-3" controlId="email">
+                        <Form.Control
+                            required
+                            type='email'
+                            placeholder='Enter email'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </Form.Group>
+                }
+                <Form.Group className="mb-3 mt-1" controlId="isAdmin">
+                    <Form.Check
+                    type="checkbox"
+                    label="Admin Mode"
+                    checked={isAdmin} // Привязываем к состоянию
+                    onChange={(e) => setIsAdmin(e.target.checked)} // Обновляем состояние
                     />
                 </Form.Group>
                 <Form.Group className="mb-3 mt-1" controlId="password">
                     <Form.Control
                         required
-                        minLength={8}
+                        minLength={4}
                         type='password'
                         placeholder='Enter password'
                         value={password}
