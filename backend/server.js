@@ -7,7 +7,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const multer = require('multer');
-const { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure } = require('./db_setup.js');
+const { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure, deleteMeasure } = require('./db_setup.js');
 const { parseCSV } = require('./utils.js');
 
 
@@ -383,6 +383,28 @@ app.post('/api/user/add-measure', async (req, res) =>{
   } catch (err) {
     console.error("Error method creating:", err);
     res.status(500).send("An error occurred while method creating.");
+  }
+})
+
+
+app.delete('/api/user/delete-measure', async (req, res) =>{
+  const { id, mode } = req.body;
+
+  console.log("HERE")
+
+  try {
+    const { success } = await deleteMeasure({id, mode});
+
+
+    if (!success) {
+      return res.status(500).send("Failed to delete Measure.");
+    }
+
+    return res.status(201).json({ message: "Measure was successfully dealeted" });
+
+  } catch (err) {
+    console.error("Error Measure delete:", err);
+    res.status(500).send("An error occurred while Measure delete.");
   }
 })
 

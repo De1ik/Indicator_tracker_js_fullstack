@@ -38,7 +38,7 @@ const Measure = () => {
     const [isAddNew, setIsAddNew] = useState(false);
 
     const [measureList, setMeasureList] = useState(weights)
-    const [measureListType, setMeasureListType] = useState(weights)
+    const [measureListType, setMeasureListType] = useState('weights')
 
     const handleMeasureListChange = (listName) => {
         if (listName === "steps"){
@@ -99,35 +99,37 @@ const Measure = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        // try {
+    const handleDelete = async (id, mode) => {
+        try {
 
-        //     const formData = {
-        //         id: id
-        //     }
+            const formData = {
+                id: id,
+                mode: mode
+            }
 
-        //     const response = await fetch(`http://localhost:8080/api/user/delete-${measureType}`, {
-        //         method: "DELETE",
-        //         headers: {
-        //         "Content-Type": "application/json",
-        //         },
-        //         body: JSON.stringify(formData),
-        //     });
+            const response = await fetch(`http://localhost:8080/api/user/delete-measure`, {
+                method: "DELETE",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
 
 
-        //     const responseData = await response.json();
+            const responseData = await response.json();
 
+            alert("Deleted")
             
-        //     if (response.status === 201) {
-        //         setMessage("success", `${measureType} was delete successfully`)
-        //         fetchData(measureType)
-        //     } else {
-        //         setMessage("error", `${responseData.message}`)
-        //     }
-        // } catch (err) {
-        //     console.error("Error:", err);
-        //     setMessage("error", "An error occurred during deleting measure.");
-        // }
+            if (response.status === 201) {
+                alert("Success")
+                setMessage("success", `${mode} was delete successfully`)
+                fetchData(mode)
+            } else {
+                setMessage("error", `${responseData.message}`)
+            }
+        } catch (err) {
+            setMessage("error", `An error occurred during deleting measure: ${err}`);
+        }
     };
 
 
@@ -150,7 +152,6 @@ const Measure = () => {
             const responseData = await response.json();
 
             const data = responseData.data;
-            setMessage("success", `data: ${data}`)
             if (mode === 'weights'){
                 setWeights(data)
             } else if (mode === 'steps'){
@@ -269,7 +270,7 @@ const Measure = () => {
                         type="date"
                         value={measureDate}
                         onChange={(e) => setMeasureDate(e.target.value)}
-                        placeholder="Enter a date" // Необязательная подсказка
+                        placeholder="Enter a date"
                     />
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -321,11 +322,15 @@ const Measure = () => {
                 All
                 </Button>
         </ButtonGroup>
-            {steps.length > 0 ?
-            <table className='text-left styled-table' style={{ minWidth: '90%'}}>
+            {measureList.length > 0 ?
+            <table className='text-left styled-table mb-5' style={{ width: '100%'}}>
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        {measureListType === "all" ?
+                        <th>Mode</th>
+                        :
+                        <></>
+                        }
                         <th>Date</th>
                         <th>Value</th>
                         <th>Method</th>
@@ -335,7 +340,11 @@ const Measure = () => {
                 <tbody>
                     {measureList.map((type) => (
                         <tr key={type.id} className='active-row'>
-                            <td className='text-start'>{type.id}</td>
+                            {measureListType === "all" ?
+                                <td className='text-start'>{type.table_name}</td>
+                            :
+                            <></>
+                            }
                             <td className='text-start'>{new Date(type.date).toLocaleDateString('en-GB')}</td>
                             <td className='text-start'>{type.value}</td>
                             <td className='text-start'>{type.method_name}</td>
@@ -343,7 +352,7 @@ const Measure = () => {
                             <td>
                                 <Row>
                                     {/* <Col><Button variant="dark" onClick={() => userEditHandle(user._id)}>Edit</Button></Col> */}
-                                    <Col><Button variant="danger" onClick={() => handleDelete(type.id)}>Delete</Button></Col>
+                                    <Col><Button variant="danger" onClick={() => handleDelete(type.id, type.table_name)}>Delete</Button></Col>
                                 </Row>
                             </td>
                         </tr>

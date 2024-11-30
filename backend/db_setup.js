@@ -499,7 +499,7 @@ const deleteMethod = async (data) => {
 const getMeasure = async (mode, id) => {
 
   let selectMeasureQuery = `
-    SELECT ${mode}.*, methods.name AS method_name, methods.description AS method_description
+    SELECT '${mode}' AS table_name, ${mode}.*, methods.name AS method_name, methods.description AS method_description
     FROM ${mode}
     LEFT JOIN methods ON ${mode}.method_id = methods.id
     WHERE ${mode}.user_id = (?);
@@ -562,4 +562,36 @@ const createMeasure = async (addData) => {
 };
 
 
-module.exports = { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure};
+const deleteMeasure = async (data) => {
+  const { id, mode } = data;
+
+
+  const deleteQuery = `
+    DELETE FROM ${mode} WHERE (id = ?);
+  `;
+
+  let connection;
+
+  try {
+    connection = await mysql.createConnection(connectionConfig);
+
+    const [result] = await connection.execute(deleteQuery, [
+      id
+    ]);
+
+    console.log("[*] Measure was deleted successfully");
+    return { success: true, message: 'Measure was deleted successfully'};
+
+  } catch (err) {
+    console.error("Error deleting measure from the database:", err);
+    return { success: false, message: `Some error was appeared ${err}` };
+  }
+  finally{
+    if (connection){
+      await connection.end();
+    }
+  }
+};
+
+
+module.exports = { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure, deleteMeasure};
