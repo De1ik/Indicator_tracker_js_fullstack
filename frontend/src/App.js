@@ -11,59 +11,85 @@ import Footter from "./components/Footter";
 import SideComponent from "./components/SideComponent";
 import Profile from "./pages/profile";
 import AdminProtect from "./auth/adminProtect";
-import Admin from "./pages/admin";
+import AdminData from "./pages/admin/AdminData";
+import AdminAdds from "./pages/admin/AdminAdds";
+import AdminUsers from "./pages/admin/AdminUsers";
+import Methods from "./pages/Methods";
+import Measure from "./pages/Measure";
 
 
 function App() {
   return (
     <>
-      <Header />
-      <main>
-        {/* <Container style={{ maxWidth: "100%" }}>
-          <Routes>
-            <Route path="/" element={<HomePage />} exact />
-            <Route path="/registration" element={<RegistrationForm />} />
-            <Route path="/login" element={<LoginForm />} />
-          </Routes>
-        </Container> */}
-
-        <Container fluid className="vh-100  d-flex flex-column">
-          <Row className="flex-grow-1 align-items-center">
-            
+      <Container fluid className="vh-100 d-flex flex-column p-0 m-0">
+        <Header className="w-100" />
+        <main className="flex-grow-1 p-0 m-0">
+          <Row className="h-100 m-0">
             {/* Left block */}
-            <Col xs={2} className="bg-secondary text-center p-3">
-              <SideComponent/>
+            <Col xs={2} className="text-center p-0 m-0">
+              <SideComponent />
             </Col>
 
             {/* Center block */}
-            <Col className="text-center p-3">
+            <Col className="text-center p-0 m-0">
               <Routes>
                 <Route path="/" element={<HomePage />} exact />
                 <Route path="/registration" element={<RegistrationForm />} />
                 <Route path="/login" element={<LoginForm />} />
-                <Route path="/profile"           element={
-                                              <ProtectedRoute>
-                                                <Profile />
-                                              </ProtectedRoute>
-                                            } />
-                <Route path="/admin"           element={
-                                              <AdminProtect>
-                                                <Admin />
-                                              </AdminProtect>
-                                            } />
+                <Route path="/methods" element={<Methods />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/measurment"
+                  element={
+                    <ProtectedRoute>
+                      <Measure />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/data"
+                  element={
+                    <AdminProtect>
+                      <AdminData />
+                    </AdminProtect>
+                  }
+                />
+                <Route
+                  path="/admin/adds"
+                  element={
+                    <AdminProtect>
+                      <AdminAdds />
+                    </AdminProtect>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <AdminProtect>
+                      <AdminUsers />
+                    </AdminProtect>
+                  }
+                />
               </Routes>
-
             </Col>
 
             {/* Right block */}
-            <Col xs={2} className="bg-secondary text-center p-3">
-              <SideComponent/>
+            <Col xs={2} className=" text-center p-0 m-0">
+              <SideComponent />
             </Col>
           </Row>
-
-        </Container>
-      </main>
-      <Footter />
+        </main>
+        <footer className="bg-dark text-light w-100 m-0">
+          <Footter />
+        </footer>
+      </Container>
     </>
   );
 }

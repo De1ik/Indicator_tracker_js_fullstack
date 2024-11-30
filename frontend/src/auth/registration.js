@@ -28,7 +28,7 @@ const RegistrationForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (password === confirmPassword && confirmPassword !== ""){
+        if (password === confirmPassword && confirmPassword !== "" && name !== "admin"){
             try {
 
                 const formData = {
@@ -73,6 +73,16 @@ const RegistrationForm = () => {
             setMessage("")
         }
     }, [password, confirmPassword])
+
+
+    useEffect(() => {
+        if (name === "admin"){
+            setMessage("Name can not be 'admin'")
+        }
+        else{
+            setMessage("")
+        }
+    }, [name])
 
     
   return (
