@@ -16,6 +16,7 @@ import AdminAdds from "./pages/admin/AdminAdds";
 import AdminUsers from "./pages/admin/AdminUsers";
 import Methods from "./pages/Methods";
 import Measure from "./pages/Measure";
+import MeasureExport from "./pages/MeasureExport";
 
 
 function App() {
@@ -50,6 +51,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Measure />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/user/measure-export"
+                  element={
+                    <ProtectedRoute>
+                      <MeasureExport />
                     </ProtectedRoute>
                   }
                 />

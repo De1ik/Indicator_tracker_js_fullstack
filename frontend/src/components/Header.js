@@ -48,6 +48,10 @@ function Header() {
     navigate("/profile");
   };
 
+  const handleNavigateMeasureExport = () => {
+    navigate("/user/measure-export");
+  };
+
   const handleNavigateAdmin = (path) => {
     navigate(path);
   };
@@ -67,9 +71,11 @@ function Header() {
                         Measure
                       </Navbar.Brand>
                       {token ? 
+                        <>
                         <Navbar.Brand onClick={handleNavigateProfile} style={{ cursor: "pointer" }} className='me-4'>
                           Profile
                         </Navbar.Brand>
+                        </>
                       :
                       <Navbar.Brand onClick={handleNavigateRegistration} style={{ cursor: "pointer" }} className='me-4'>
                         Registration

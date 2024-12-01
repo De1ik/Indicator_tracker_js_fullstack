@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const multer = require('multer');
 const { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure, deleteMeasure } = require('./db_setup.js');
-const { parseCSV } = require('./utils.js');
+const { parseCSV, measureParseCSV } = require('./utils.js');
 
 
 const app = express();
@@ -17,13 +17,13 @@ const PORT = 8080;
 setupDatabase();
 
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(cors());
+app.use(cors());
 
-app.use(cors({
-  origin: "http://localhost:3000", // Replace with your frontend's URL
-  methods: "GET,POST,PUT,DELETE", // Allowed methods
-  credentials: true               // Allow cookies if needed
-}));
+// app.use(cors({
+//   origin: "http://localhost:3000", // Replace with your frontend's URL
+//   methods: "GET,POST,PUT,DELETE", // Allowed methods
+//   credentials: true               // Allow cookies if needed
+// }));
 
 app.use(express.json());
 
@@ -317,17 +317,24 @@ app.delete('/api/delete-method', async (req, res) =>{
 
 
   try {
-    const { success } = await deleteMethod({id});
+    const { success, message } = await deleteMethod({id});
 
 
     if (!success) {
-      return res.status(500).send("Failed to delete Method.");
+      return res.status(500).json({ message });
     }
 
     return res.status(201).json({ message: "Method was successfully dealeted" });
 
   } catch (err) {
-    console.error("Error Method delete:", err);
+    // if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+    //   console.error('Cannot delete method. There are dependent records in weights.');
+    //   res.status(500).send('Cannot delete method. There are dependent records in weights.');
+    // } else {
+    //   console.error('Error deleting method:', err);
+    //   res.status(500).send("An error occurred while Method delete.");
+    // }
+    console.error('Error deleting method:', err);
     res.status(500).send("An error occurred while Method delete.");
   }
 })
@@ -410,7 +417,73 @@ app.delete('/api/user/delete-measure', async (req, res) =>{
 
 
 
+app.post('/api/user/upload-csv/get-:id', upload.single('file'), async (req, res) => {
+  try {
+    // const { mode } = req.params;
+    // const { id } = req.query;
+    const { id } = req.params;
 
+    console.log("ID:", id)
+
+    if (!id) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded.' });
+    }
+
+    const csvContent = req.file.buffer.toString('utf-8');
+
+    const result = await measureParseCSV(csvContent, id);
+
+    if (result.success) {
+      res.json({ success: true, message: result.message });
+    } else {
+      res.status(400).json({ success: false, message: result.message, errors: result.errors });
+    }
+  } catch (error) {
+    console.error("Error processing CSV upload:", error);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+
+app.get('/api/user/download-measure-csv/get-:mode', async  (req, res) => {
+  try {
+
+    const { mode } = req.params;
+    const { id } = req.query;
+
+    if (!id) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    
+    const { success, result } = await getMeasure(mode, id);
+
+
+    if (!success) {
+      return res.status(500).send("Failed to fetch mesure from the database.");
+    }
+
+    let csvContent = 'date,value,type,method\n';
+    result.forEach(item => {
+      csvContent += `${new Date(item.date).toISOString().split('T')[0]},${item.value},${item.table_name},${item.method_name}\n`;
+    });
+
+    const filePath = path.join(__dirname, `${mode}_data.csv`);
+    fs.writeFileSync(filePath, csvContent);
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="${mode}_data.csv"`);
+    res.send(csvContent);
+  } catch (err) {
+    console.error("Error exporting measures:", err);
+    res.status(500).send("An error occurred while exporting measure.");
+  }
+});
 
 
 

@@ -86,8 +86,7 @@ const Methods = () => {
                 setMessage("error", `${responseData.message}`)
             }
         } catch (err) {
-            console.error("Error:", err);
-            setMessage("error", "An error occurred during deleting method.");
+            setMessage("error", `An error occurred during deleting method: ${err}`);
     }
     };
 

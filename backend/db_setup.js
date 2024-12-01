@@ -405,6 +405,54 @@ const updateClicks = async (data) => {
 };
 
 
+const getMethodCreate = async (data) => {
+  const { name } = data;
+  const selectQuery = `
+    SELECT id FROM methods WHERE name = ?;
+  `;
+
+  console.log("NAME:", name)
+
+
+
+  let connection;
+
+  try {
+    connection = await mysql.createConnection(connectionConfig);
+
+    const [result] = await connection.execute(selectQuery, [
+      name
+    ]);
+
+    if (result.length > 0){
+      return { success: true, result: result[0].id };
+    }
+    else {
+      await createMethod({name, description: "No information about this method"})
+      const [result] = await connection.execute(selectQuery, [
+        name
+      ]);
+    }
+
+    if (result.length > 0){
+      return { success: true, result: result[0].id };
+    }
+    else{
+      return { success: false, result: null };
+    }
+
+  } catch (err) {
+    console.error("Error login user into the database:", err);
+    return {succes: false, result: null}
+  }
+  finally {
+    if (connection) {
+      await connection.end();
+    }
+  }
+}
+
+
 const getAllMethods = async () => {
   const selectMethodsQuery = `
     SELECT id, name, description FROM methods;
@@ -485,8 +533,13 @@ const deleteMethod = async (data) => {
     return { success: true, message: 'Method was deleted successfully'};
 
   } catch (err) {
-    console.error("Error deleting add from the database:", err);
-    return { success: false, message: `Some error was appeared ${err}` };
+    if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+      console.error('Cannot delete method. There are dependent records in weights.');
+      return { success: false, message: `Cannot delete method. There are dependent records in measurment.` };
+    } else {
+      console.error('Error deleting method:', err);
+      return { success: false, message: `Some error was appeared ${err}` };
+    }
   }
   finally{
     if (connection){
@@ -594,4 +647,4 @@ const deleteMeasure = async (data) => {
 };
 
 
-module.exports = { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure, deleteMeasure};
+module.exports = { setupDatabase, addUser, loginUser, getAllUsers, getAllAdds, createAdd, deleteAdd, updateClicks, deleteUser, getAllMethods, createMethod, deleteMethod, getMeasure, createMeasure, deleteMeasure, getMethodCreate};

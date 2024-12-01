@@ -3,15 +3,20 @@ import { useState, useEffect } from "react";
 
 import getUserEmail from '../utils/getUserEmail';
 import getUserId from '../utils/getUserId';
+import { useNavigate } from 'react-router-dom';
 
 
 const Measure = () => {
+
+    const [loading, setLoading] = useState(true)
 
     const [messageSuccess, setMessageSuccess] = useState("");
     const [messageError, setMessageError] = useState("");
 
     const [email, setEmail] = useState("")
     const [userId, setUserId] = useState("")
+
+    const navigate = useNavigate();
 
     const setMessage = (type, message) => {
         setMessageError("");
@@ -26,7 +31,7 @@ const Measure = () => {
 
 
     const [weights, setWeights] = useState([]);
-    const [heartbeats, setHeartbeat] = useState([]);
+    const [heartbeats, setHeartbeats] = useState([]);
     const [steps, setSteps] = useState([]);
 
     const [methods, setMethods] = useState("")
@@ -53,7 +58,7 @@ const Measure = () => {
         } else {
             setMeasureListType("all")
             const combinedData = [...weights, ...heartbeats, ...steps];
-            const sortedData = combinedData.sort((a, b) => new Date(a.date) - new Date(b.date));
+            const sortedData = combinedData.sort((a, b) => new Date(b.date) - new Date(a.date));
             setMeasureList(sortedData); 
         }
       };
@@ -117,11 +122,8 @@ const Measure = () => {
 
 
             const responseData = await response.json();
-
-            alert("Deleted")
             
             if (response.status === 201) {
-                alert("Success")
                 setMessage("success", `${mode} was delete successfully`)
                 fetchData(mode)
             } else {
@@ -157,7 +159,7 @@ const Measure = () => {
             } else if (mode === 'steps'){
                 setSteps(data)
             } else {
-                setHeartbeat(data)
+                setHeartbeats(data)
             }
           } else {
             const errorText = await response.text();
@@ -195,6 +197,10 @@ const Measure = () => {
         }
       };
 
+    const handleExportImport = () => {
+        navigate("/user/measure-export")
+    }
+
 
 
 
@@ -202,17 +208,31 @@ const Measure = () => {
     useEffect(() => {
         setEmail(getUserEmail())
         setUserId(getUserId())
+        fetchMethods()
       }, []);
 
 
     useEffect(() => {
-        fetchMethods()
-        if (email){
-            fetchData('weights')
-            fetchData('steps')
-            fetchData('heartbeats')
+        if (userId){
+            const loadData = async () => {
+                await fetchData('weights');
+                await fetchData('steps');
+                await fetchData('heartbeats');
+                setLoading(false)
+            }
+            loadData()
         }
-      }, [email]);
+    }, [userId]);
+
+
+    useEffect(() => {
+        handleMeasureListChange(measureListType)
+    }, [weights, steps, heartbeats]);
+
+
+  
+
+
 
     
   return (
@@ -220,6 +240,7 @@ const Measure = () => {
       <h1 className="mb-4">Measurmnet {email} {userId}</h1>
       {messageSuccess && <Alert variant="success" className="mt-3">{messageSuccess}</Alert>}
       {messageError && <Alert variant="danger" className="mt-3">{messageError}</Alert>}
+
 
       <Row className="justify-content-center align-items-center my-4">
         <Col md="auto">
@@ -232,6 +253,8 @@ const Measure = () => {
             />
         </Col>
       </Row>
+
+      <Button className='mb-4' onClick={handleExportImport}>Export/Import</Button>
 
 
       {isAddNew ?   
@@ -322,46 +345,50 @@ const Measure = () => {
                 All
                 </Button>
         </ButtonGroup>
+        {loading ? <p>Loading...</p> :
+            <>
             {measureList.length > 0 ?
-            <table className='text-left styled-table mb-5' style={{ width: '100%'}}>
-                <thead>
-                    <tr>
-                        {measureListType === "all" ?
-                        <th>Mode</th>
-                        :
-                        <></>
-                        }
-                        <th>Date</th>
-                        <th>Value</th>
-                        <th>Method</th>
-                        <th>Method Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {measureList.map((type) => (
-                        <tr key={type.id} className='active-row'>
+                <table className='text-left styled-table mb-5' style={{ width: '100%'}}>
+                    <thead>
+                        <tr>
                             {measureListType === "all" ?
-                                <td className='text-start'>{type.table_name}</td>
+                            <th>Mode</th>
                             :
                             <></>
                             }
-                            <td className='text-start'>{new Date(type.date).toLocaleDateString('en-GB')}</td>
-                            <td className='text-start'>{type.value}</td>
-                            <td className='text-start'>{type.method_name}</td>
-                            <td className='text-start'>{type.method_description}</td>
-                            <td>
-                                <Row>
-                                    {/* <Col><Button variant="dark" onClick={() => userEditHandle(user._id)}>Edit</Button></Col> */}
-                                    <Col><Button variant="danger" onClick={() => handleDelete(type.id, type.table_name)}>Delete</Button></Col>
-                                </Row>
-                            </td>
+                            <th>Date</th>
+                            <th>Value</th>
+                            <th>Method</th>
+                            <th>Method Description</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            :
-            <p>No Methods..</p>
+                    </thead>
+                    <tbody>
+                        {measureList.map((type) => (
+                            <tr key={type.id} className='active-row'>
+                                {measureListType === "all" ?
+                                    <td className='text-start'>{type.table_name}</td>
+                                :
+                                <></>
+                                }
+                                <td className='text-start'>{new Date(type.date).toISOString().split('T')[0]}</td>
+                                <td className='text-start'>{type.value}</td>
+                                <td className='text-start'>{type.method_name}</td>
+                                <td className='text-start'>{type.method_description}</td>
+                                <td>
+                                    <Row>
+                                        {/* <Col><Button variant="dark" onClick={() => userEditHandle(user._id)}>Edit</Button></Col> */}
+                                        <Col><Button variant="danger" onClick={() => handleDelete(type.id, type.table_name)}>Delete</Button></Col>
+                                    </Row>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                :
+                <p>No Records</p>
             }
+            </>
+        } 
         </Container>
       }
     </Container>
