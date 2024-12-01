@@ -46,7 +46,6 @@ const SideComponent = () => {
       });
 
       const data = await response.json();
-      // console.log("Update successful:", data);
 
   } catch (err) {
       console.error("Error:", err);
@@ -78,7 +77,7 @@ const SideComponent = () => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "100vh", background: "rgba(44, 62, 80, 0.8)"}}>
-      {adds.length > 0 && (
+      {adds.length > 0 ? 
         <div
           className="clickable-image"
           onClick={() => handleImageClick(adds[currentIndex]?.id)}
@@ -91,7 +90,19 @@ const SideComponent = () => {
             fluid
           />
         </div>
-      )}
+        :
+        <>
+        <Row>
+          <Col><p>It can be your adds</p></Col>
+          <Image
+            src={adds[currentIndex]?.image_link || 'https://via.placeholder.com/250'}
+            alt="Advertisement"
+            rounded
+            fluid
+          />
+        </Row>
+        </>
+        }
     </Container>
   );
 };

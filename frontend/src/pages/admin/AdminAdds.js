@@ -51,9 +51,10 @@ const AdminAdds = () => {
                 setImageTarget('')
                 setImageUrl('')
                 setCounter(0)
-                setMessage("success", "New Add was Created")
-                fetchAdds()
+                // fetchAdds()
                 setIsAddNew(false)
+                window.location.reload();
+                setMessage("success", "New Add was Created")
             } else {
                 setMessage("error", `${responseData.message}`)
             }
@@ -84,8 +85,9 @@ const AdminAdds = () => {
 
             
             if (response.status === 201) {
+                window.location.reload();
                 setMessage("success", "Add was delete successfully")
-                fetchAdds()
+                // fetchAdds()
             } else {
                 setMessage("error", `${responseData.message}`)
             }
@@ -211,7 +213,6 @@ const AdminAdds = () => {
             <Card className="mb-4" key={add.id}>
             <Card.Body>
                 <Row>
-                {/* Левая колонка с изображением */}
                 <Col md={4} className="d-flex justify-content-center align-items-center">
                     {add.image_link && (
                     <img
@@ -230,7 +231,6 @@ const AdminAdds = () => {
                         <Form.Control
                         type="text"
                         value={add.image_link}
-                        //   onChange={(e) => handleUpdate(index, 'image_link', e.target.value)}
                         placeholder="Enter image URL"
                         />
                     </Form.Group>
@@ -239,7 +239,6 @@ const AdminAdds = () => {
                         <Form.Control
                         type="text"
                         value={add.target_link}
-                        //   onChange={(e) => handleUpdate(index, 'target_link', e.target.value)}
                         placeholder="Enter target URL"
                         />
                     </Form.Group>
@@ -248,7 +247,6 @@ const AdminAdds = () => {
                         <Form.Control
                         type="number"
                         value={add.counter}
-                        //   onChange={(e) => handleUpdate(index, 'counter', parseInt(e.target.value, 10))}
                         placeholder="Enter counter"
                         />
                     </Form.Group>

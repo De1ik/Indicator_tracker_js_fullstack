@@ -1,19 +1,29 @@
 import React, { useMemo } from 'react';
 import { Scatter } from 'react-chartjs-2';
+
+import PropTypes from 'prop-types';
+
 import {
   Chart as ChartJS,
+  LineController,
   LinearScale,
   PointElement,
   LineElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
 } from 'chart.js';
-import PropTypes from 'prop-types';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  LineController,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-// Функция для вычисления линейной регрессии
 const calculateLinearRegression = (data) => {
   const n = data.length;
   const sumX = data.reduce((acc, point) => acc + point.x, 0);

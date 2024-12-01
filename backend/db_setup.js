@@ -1,20 +1,48 @@
 const mysql = require("mysql2/promise");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
-// Конфигурация соединения
 const connectionConfig = {
-  host: "localhost",
-  user: "root",
-  password: "js_student_6",
-  database: "js_3_db",
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "js_student_6",
+  database: process.env.DB_NAME || "js_3_db",
+};
+
+
+const waitForDatabase = async (retries = 5, delay = 5000) => {
+  while (retries > 0) {
+    try {
+      const connection = await mysql.createConnection(connectionConfig);
+      await connection.end();
+      console.log("[*] Database is ready for connections");
+      return;
+    } catch (err) {
+      console.error(`Database not ready, retrying... (${retries} attempts left)`);
+      retries -= 1;
+      await new Promise((res) => setTimeout(res, delay));
+    }
+  }
+  throw new Error("Database connection failed after multiple attempts");
 };
 
 // Функция для настройки базы данных
 const setupDatabase = async () => {
   try {
+    // const connection = await mysql.createConnection(connectionConfig);
+
+    // console.log("[*] DB was connected successfully");
+    await waitForDatabase();
     const connection = await mysql.createConnection(connectionConfig);
 
-    console.log("[*] DB was connected successfully");
+    console.log("[*] Connected to MySQL server");
+
+    const dbName = process.env.DB_NAME || "js_3_db";
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+    console.log(`[*] Database '${dbName}' created or already exists`);
+
+    await connection.changeUser({ database: dbName });
+
+    console.log("[*] Switched to database:", dbName);
 
     const createUserTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
@@ -97,10 +125,13 @@ const setupDatabase = async () => {
 
     await connection.end();
     console.log("[*] Connection closed successfully.");
+    await addUser({name: 'admin', email: 'admin@gmail.com', password: "admin", age: 18, height: 0})
   } catch (err) {
     console.error("Error setting up the database:", err);
   }
 };
+
+
 
 
 
@@ -196,7 +227,7 @@ const addUser = async (userData, needHash = true) => {
     ]);
 
     console.log("[*] User was inserted successfully");
-    return { success: true, id: isUserExist.result[0].id, message: "User already exists" };
+    return { success: true, id: result.insertId, message: "User already exists" };
 
   } catch (err) {
     console.error("Error inserting user into the database:", err);
@@ -325,11 +356,11 @@ const createAdd = async (addData) => {
     ]);
 
     console.log("[*] New Add was inserted successfully");
-    return { success: true, message: 'New Add was inserted successfully'};
+    return { success: true, message: 'New Add was inserted successfully', id: result.insertId};
 
   } catch (err) {
     console.error("Error inserting add into the database:", err);
-    return { success: false, message: `Some error was appeared ${err}` };
+    return { success: false, message: `Some error was appeared ${err}`, id: null };
   }
   finally{
     if (connection){

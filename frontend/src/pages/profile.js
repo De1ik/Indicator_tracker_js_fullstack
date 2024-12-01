@@ -215,7 +215,7 @@ const Profile = () => {
                             onChange={(e) => setMethodType(e.target.value)}>
                             <option value="">Select a method</option>
                             {methods.map((method, index) => (
-                                <option value={method.name} controlId={method.id}>{method.name}</option>
+                                <option value={method.name} key={method.id}>{method.name}</option>
                             ))};
                         </Form.Select>
                 </Form.Group>
@@ -286,6 +286,7 @@ const Profile = () => {
       </Container>
 
       <Container>
+        {measureList.length < 1 && <p className="fw-bold">No Data</p>}
         {measureList ?
           <LineChart data={filteredList ? filteredList : measureList}/>
         :

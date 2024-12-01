@@ -68,7 +68,7 @@ const AdminData = () => {
       if (response.ok) {
         setMessage("success", "Users imported successfully!");
       } else {
-        const errorText = await response.text(); // Получение текста ошибки
+        const errorText = await response.text();
         console.error("Error response:", errorText);
         setMessage("error", "Failed to import users.");
       }

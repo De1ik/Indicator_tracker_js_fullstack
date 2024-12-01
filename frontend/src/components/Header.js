@@ -61,7 +61,7 @@ function Header() {
         <header>
             <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect className="py-4">
                     <Navbar.Brand onClick={handleNavigateHome} style={{ cursor: "pointer" }} className='ms-4'>
-                        Scales Tools
+                        DelikTool
                     </Navbar.Brand>
                     <Nav className="ms-auto">
                       <Navbar.Brand onClick={handleNavigateMethods} style={{ cursor: "pointer" }} className='me-4'>

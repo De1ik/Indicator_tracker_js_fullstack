@@ -92,7 +92,7 @@ const AdminUsers = () => {
 
             if (response.status === 201) {
                 defaultData()
-                setMessageSuccess("success", "User was created successfully")
+                setMessage("success", "User was created successfully")
                 setIsAddNew(false)
                 fetchUsers()
               } else {
@@ -140,10 +140,10 @@ const AdminUsers = () => {
 
   useEffect(() => {
     if (password !== "" && confirmPassword !== "" && password !== confirmPassword){
-        setMessage("warning", "Passwords must be equal")
+        setMessageWarning("Passwords must be equal")
     }
     else{
-        setMessage("warning", "")
+        setMessageWarning("")
     }
   }, [password, confirmPassword])
 

@@ -9,8 +9,7 @@ function Footter() {
           <Col md={4} className="text-center text-md-left mb-3 mb-md-0">
             <h5>About Us</h5>
             <p>
-              We are TeddyShop, your go-to destination for high-quality products. 
-              We value customer satisfaction and offer the best deals in the market.
+              Tool that help you to track your parameters
             </p>
           </Col>
           <Col md={4} className="text-center mb-3 mb-md-0">
@@ -29,7 +28,7 @@ function Footter() {
         </Row>
         <Row className="mt-4">
           <Col className="text-center">
-            <p>&copy; {new Date().getFullYear()} TeddyShop. All Rights Reserved.</p>
+            <p>&copy; {new Date().getFullYear()} DelikTool</p>
           </Col>
         </Row>
       </Container>

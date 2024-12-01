@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom'
-import { Form, Button } from 'react-bootstrap'
+import { Form, Button, Row, Col } from 'react-bootstrap'
 
 import FormContainer from "../components/FormContainer";
 import Message from "../components/Message";
@@ -42,7 +42,6 @@ const LoginForm = () => {
 
                 if (response.status === 201) {
                     localStorage.setItem("authToken", responseData.token);
-                    alert("Sign in was successful!");
                     handleNavigationHome()
                 } else {
                     // const errorData = await response.json();
@@ -61,6 +60,17 @@ const LoginForm = () => {
         <h1 className='text-center m-5'>Sign In</h1>
         <FormContainer>
             <Form onSubmit={handleSubmit}>
+            <Row className="justify-content-center align-items-center my-4">
+                <Col md="auto">
+                    <Form.Check
+                    type="checkbox"
+                    label="Admin Mode"
+                    checked={isAdmin}
+                    onChange={(e) => setIsAdmin(e.target.checked)}
+                    className="fw-bold"
+                    />
+                </Col>
+            </Row>
                 {isAdmin ?
                     <Form.Group className="mb-3" controlId="email">
                         <Form.Control
@@ -83,14 +93,14 @@ const LoginForm = () => {
                         />
                     </Form.Group>
                 }
-                <Form.Group className="mb-3 mt-1" controlId="isAdmin">
+                {/* <Form.Group className="mb-3 mt-1" controlId="isAdmin">
                     <Form.Check
                     type="checkbox"
                     label="Admin Mode"
                     checked={isAdmin} // Привязываем к состоянию
                     onChange={(e) => setIsAdmin(e.target.checked)} // Обновляем состояние
                     />
-                </Form.Group>
+                </Form.Group> */}
                 <Form.Group className="mb-3 mt-1" controlId="password">
                     <Form.Control
                         required

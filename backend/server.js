@@ -12,12 +12,14 @@ const { parseCSV, measureParseCSV } = require('./utils.js');
 
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 setupDatabase();
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "build")));
 
 // app.use(cors({
 //   origin: "http://localhost:3000", // Replace with your frontend's URL
@@ -49,7 +51,7 @@ app.post("/api/register", async (req, res) => {
     return res.status(201).json({ message: result_qw.message, token: token });
   }
   else {
-    return res.status(400).json({ message: result_qw.message });
+    return res.status(400).json({ message: result_qw.message, token: null });
   }
 });
 
@@ -125,14 +127,14 @@ app.post('/api/admin/create-add', async (req, res) =>{
 
 
   try {
-    const { success } = await createAdd({imageTarget, imageUrl, counter});
+    const { success, id } = await createAdd({imageTarget, imageUrl, counter});
 
 
     if (!success) {
       return res.status(500).send("Failed to create new add.");
     }
 
-    return res.status(201).json({ message: "Add was successfully created" });;
+    return res.status(201).json({ message: "Add was successfully created", id: id });;
 
   } catch (err) {
     console.error("Error adds getting:", err);
@@ -340,13 +342,6 @@ app.delete('/api/delete-method', async (req, res) =>{
 })
 
 
-
-
-
-
-
-
-
 app.get('/api/user/get-:mode', async (req, res) =>{
   try {
     const { mode } = req.params;
@@ -484,10 +479,6 @@ app.get('/api/user/download-measure-csv/get-:mode', async  (req, res) => {
     res.status(500).send("An error occurred while exporting measure.");
   }
 });
-
-
-
-
 
 
 

@@ -1,37 +1,20 @@
-# Используем Node.js как базовый образ
-FROM node:14
+# Используем Node.js версии 23
+FROM node:23
 
-# Устанавливаем рабочую директорию
+# Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
 
-# Копируем зависимости фронтенда
-COPY ./frontend/package*.json ./frontend/
-WORKDIR /app/frontend
+# Копируем package.json и package-lock.json для установки зависимостей
+COPY backend/package*.json ./
+
+# Устанавливаем зависимости
 RUN npm install
 
-# Копируем весь проект фронтенда
-COPY ./frontend /app/frontend
+# Копируем весь код бэкенда в контейнер
+COPY backend/ .
 
-# Проверяем содержимое public
-RUN ls -la /app/frontend/public
+# Устанавливаем переменную окружения для порта
+ENV PORT=8080
 
-# Сборка фронтенда
-RUN npm run build
-
-# Устанавливаем зависимости бэкенда
-WORKDIR /app
-COPY ./backend/package*.json ./backend/
-WORKDIR /app/backend
-RUN npm install
-
-# Создаём папку public для бэкенда и копируем сборку фронтенда
-RUN mkdir -p /app/backend/public && cp -r /app/frontend/build/* /app/backend/public/
-
-# Копируем фронтенд-сборку в бэкенд
-# RUN cp -r /app/frontend/build/* /app/backend/public/
-
-# Открываем порт 8080
-EXPOSE 8080
-
-# Запускаем сервер
-CMD ["npm", "start"]
+# Указываем команду для запуска приложения
+CMD ["node", "server.js"]

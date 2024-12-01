@@ -237,7 +237,7 @@ const Measure = () => {
     
   return (
     <Container className="mt-5">
-      <h1 className="mb-4">Measurmnet {email} {userId}</h1>
+      <h1 className="mb-4">Measurmnet</h1>
       {messageSuccess && <Alert variant="success" className="mt-3">{messageSuccess}</Alert>}
       {messageError && <Alert variant="danger" className="mt-3">{messageError}</Alert>}
 
@@ -270,10 +270,10 @@ const Measure = () => {
                             value={measureType}
                             onChange={(e) => setMeasureType(e.target.value)}
                         >
-                            <option value="">Select an option</option>
-                            <option value="weights">Weights</option>
-                            <option value="steps">Steps</option>
-                            <option value="heartbeats">Heartbeats</option>
+                            <option value="" key={1}>Select an option</option>
+                            <option value="weights" key={2}>Weights</option>
+                            <option value="steps" key={3}>Steps</option>
+                            <option value="heartbeats" key={4}>Heartbeats</option>
                         </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -281,9 +281,9 @@ const Measure = () => {
                             required
                             value={methodType}
                             onChange={(e) => setMethodType(e.target.value)}>
-                            <option value="">Select a method</option>
+                            <option value="" key={-1}>Select a method</option>
                             {methods.map((method, index) => (
-                                <option value={method.id}>{method.name}</option>
+                                <option value={method.id} key={index}>{method.name}</option>
                             ))};
                         </Form.Select>
                     </Form.Group>
@@ -299,7 +299,7 @@ const Measure = () => {
                     <Form.Group className="mb-3">
                         <Form.Control
                         required
-                        type="text"
+                        type="number"
                         value={measureValue}
                         onChange={(e) => setMeasureValue(e.target.value)}
                         placeholder="Enter new value"
