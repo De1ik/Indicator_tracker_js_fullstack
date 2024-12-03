@@ -459,17 +459,11 @@ const getMethodCreate = async (data) => {
       return { success: true, result: result[0].id };
     }
     else {
-      await createMethod({name, description: "No information about this method"})
-      const [result] = await connection.execute(selectQuery, [
-        name
-      ]);
-    }
-
-    if (result.length > 0){
-      return { success: true, result: result[0].id };
-    }
-    else{
-      return { success: false, result: null };
+      const {success, id} = await createMethod({name, description: "No information about this method"})
+      if (success){
+        return { success: true, result: id };
+      }
+      return { success:  false};
     }
 
   } catch (err) {
@@ -530,7 +524,7 @@ const createMethod = async (addData) => {
     ]);
 
     console.log("[*] New Method was inserted successfully");
-    return { success: true, message: 'New Method was inserted successfully'};
+    return { success: true, id: result.insertId, message: 'New Method was inserted successfully'};
 
   } catch (err) {
     console.error("Error inserting method into the database:", err);
@@ -616,6 +610,8 @@ const getMeasure = async (mode, id) => {
 const createMeasure = async (addData) => {
   const { mode, date, methodType, value, id } = addData;
 
+  console.log("methodType:", methodType)
+  console.log("USer Id:", id)
 
   const createMethodQuery = `
     INSERT INTO ${mode} (date, value, method_id, user_id)
@@ -635,7 +631,7 @@ const createMeasure = async (addData) => {
     return { success: true, message: 'New Method was inserted successfully'};
 
   } catch (err) {
-    console.error("Error inserting method into the database:", err);
+    console.error("Error inserting measure into the database:", err);
     return { success: false, message: `Some error was appeared ${err}` };
   }
   finally{

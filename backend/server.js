@@ -21,11 +21,6 @@ app.use(cors());
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, "build")));
 
-// app.use(cors({
-//   origin: "http://localhost:3000", // Replace with your frontend's URL
-//   methods: "GET,POST,PUT,DELETE", // Allowed methods
-//   credentials: true               // Allow cookies if needed
-// }));
 
 app.use(express.json());
 
@@ -370,7 +365,9 @@ app.get('/api/user/get-:mode', async (req, res) =>{
 
 app.post('/api/user/add-measure', async (req, res) =>{
   const { mode, methodType, date, value, id } = req.body;
-
+  if (!id){
+    return res.status(500).send("An error occurred while measure creating.");
+  }
 
   try {
     const { success } = await createMeasure({mode, methodType, date, value, id});
@@ -384,15 +381,13 @@ app.post('/api/user/add-measure', async (req, res) =>{
 
   } catch (err) {
     console.error("Error method creating:", err);
-    res.status(500).send("An error occurred while method creating.");
+    res.status(500).send("An error occurred while measure creating.");
   }
 })
 
 
 app.delete('/api/user/delete-measure', async (req, res) =>{
   const { id, mode } = req.body;
-
-  console.log("HERE")
 
   try {
     const { success } = await deleteMeasure({id, mode});
@@ -414,11 +409,7 @@ app.delete('/api/user/delete-measure', async (req, res) =>{
 
 app.post('/api/user/upload-csv/get-:id', upload.single('file'), async (req, res) => {
   try {
-    // const { mode } = req.params;
-    // const { id } = req.query;
     const { id } = req.params;
-
-    console.log("ID:", id)
 
     if (!id) {
       return res.status(400).json({ message: 'User ID is required' });
@@ -494,3 +485,6 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+
+module.exports = app;

@@ -1,0 +1,17 @@
+# Используем Node.js как базовый образ
+FROM node:23
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем package.json и package-lock.json для установки зависимостей
+COPY backend/package*.json ./
+
+# Устанавливаем зависимости
+RUN npm install
+
+# Копируем весь код бэкенда в контейнер
+COPY backend/ ./
+
+# Указываем команду по умолчанию (тесты)
+CMD ["npm", "test"]
